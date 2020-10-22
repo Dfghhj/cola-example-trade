@@ -1,2 +1,3 @@
 # cola-example-trade
-学习使用COLA
+
+COLA框架、交易流程Demo
