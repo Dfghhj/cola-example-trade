@@ -1,7 +1,6 @@
 package top.dfghhj.gateway.commodity;
 
 import top.dfghhj.domain.commodity.Commodity;
-import top.dfghhj.domain.commodity.rule.ActivityRules;
 import top.dfghhj.domain.commodity.rule.InventoryRules;
 import top.dfghhj.domain.gateway.commodity.CommodityGatewayI;
 import org.springframework.stereotype.Service;
@@ -23,8 +22,8 @@ public class CommodityGatewayImpl implements CommodityGatewayI {
         commodity.setId(commodityId);
         commodity.setCommodityId(commodityId);
         commodity.setCommodityName("name_" + commodityId);
-        commodity.setPrice(new BigDecimal("10"));
-        commodity.setActivityRules(new ActivityRules());
+        commodity.setMerchantId("1");
+        commodity.setAmount(new BigDecimal("10"));
         commodity.setInventory(20);
         commodity.setInventoryRules(new InventoryRules(true, 0, 10));
         commodity.setPurchaseLimit(5);

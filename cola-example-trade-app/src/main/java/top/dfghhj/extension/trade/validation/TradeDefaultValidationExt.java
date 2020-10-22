@@ -14,7 +14,7 @@ public class TradeDefaultValidationExt implements TradeValidationExtPt {
     @Override
     public void validate(TradeAddCmd tradeAddCmd) {
         log.info("默认订单校验......");
-        if (tradeAddCmd.getTargetAddr() == null) {
+        if (tradeAddCmd.getShippingAddr() == null) {
             throw new BizException("交易的收获地址不能为空");
         }
     }

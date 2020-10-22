@@ -1,6 +1,7 @@
 package top.dfghhj.dto.trade;
 
 import com.alibaba.cola.dto.Command;
+import top.dfghhj.dto.trade.domainmodel.ShippingAddrDTO;
 import top.dfghhj.dto.trade.domainmodel.TradeCommodityDTO;
 import lombok.Data;
 
@@ -11,9 +12,12 @@ import java.util.List;
 public class TradeAddCmd extends Command {
 
     @NotEmpty
-    private String shopperId;
+    private String customerId;
 
-    private String targetAddr;
+    @NotEmpty
+    private String merchantId;
+
+    private ShippingAddrDTO shippingAddr;
 
     @NotEmpty
     private List<TradeCommodityDTO> commodityList;

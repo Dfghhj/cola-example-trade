@@ -3,7 +3,7 @@ package top.dfghhj.extension.trade.checkData.purchaseLimit;
 import com.alibaba.cola.exception.BizException;
 import com.alibaba.cola.extension.Extension;
 import top.dfghhj.domain.trade.Trade;
-import top.dfghhj.domain.trade.commodity.TradeCommodity;
+import top.dfghhj.domain.trade.TradeCommodity;
 
 /**
  * 默认校验

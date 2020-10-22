@@ -2,9 +2,6 @@ package top.dfghhj.domain.trade;
 
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 public class TradeStatus {
 
@@ -19,13 +16,18 @@ public class TradeStatus {
     private Trade trade;
 
     public TradeStatus(Trade trade, String status) {
-        this.status = status;
-        this.createTime = System.currentTimeMillis();
         this.trade = trade;
-        List<TradeStatus> statusList = trade.getTradeStatus();
-        if (statusList == null) {
-            statusList = new ArrayList<>();
-        }
-        statusList.add(this);
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "TradeStatus{" +
+                "id=" + id +
+                ", status='" + status + '\'' +
+                ", createTime=" + createTime +
+                ", modifiedTime=" + modifiedTime +
+                ", trade=" + trade.getOrderId() +
+                '}';
     }
 }

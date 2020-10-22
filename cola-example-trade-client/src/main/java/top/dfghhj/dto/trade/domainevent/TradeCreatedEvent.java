@@ -11,10 +11,10 @@ public class TradeCreatedEvent implements DomainEventI, MessageQueueEventI {
 
     public static final String eventTopic = "trade-created";
 
-    private String tradeId;
+    private String orderId;
 
-    public TradeCreatedEvent(String tradeId) {
-        this.tradeId = tradeId;
+    public TradeCreatedEvent(String orderId) {
+        this.orderId = orderId;
     }
 
     @Override

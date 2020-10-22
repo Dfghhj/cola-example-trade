@@ -20,7 +20,7 @@ public class TradePreSaleValidationExt implements TradeValidationExtPt {
         if (!tradeAddCmd.getType().equals(TradeType.PRE_SALE.name())) {
             throw new BizException("交易类型不是预售交易");
         }
-        if (tradeAddCmd.getTargetAddr() == null) {
+        if (tradeAddCmd.getShippingAddr() == null) {
             throw new BizException("交易的收获地址不能为空");
         }
     }

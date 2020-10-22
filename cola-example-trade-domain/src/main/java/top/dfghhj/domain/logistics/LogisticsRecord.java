@@ -1,13 +1,13 @@
-package top.dfghhj.domain.trade.logistics;
+package top.dfghhj.domain.logistics;
 
 import lombok.Data;
 
 @Data
 public class LogisticsRecord {
 
-    private String source;
+    private String sourceAddr;
 
-    private String target;
+    private String targetAddr;
 
     private Long createTime;
 

@@ -2,6 +2,6 @@ package top.dfghhj.dto.trade.domainmodel;
 
 public enum TradeStatusEnum {
 
-    NORMAL,CLOSED;
+    TO_BE_PAID,NORMAL,CLOSED;
 
 }

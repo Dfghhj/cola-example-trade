@@ -1,13 +1,12 @@
 package top.dfghhj.executor.trade.create;
 
 import com.alibaba.cola.dto.Response;
+import com.alibaba.cola.dto.SingleResponse;
 import com.alibaba.cola.extension.ExtensionExecutor;
 import top.dfghhj.domain.trade.Trade;
 import top.dfghhj.dto.trade.TradeAddCmd;
 import top.dfghhj.dto.trade.domainevent.TradeCreatedEvent;
-import top.dfghhj.executor.trade.create.phase.TradeCheckPhase;
-import top.dfghhj.executor.trade.create.phase.TradeCreatePhase;
-import top.dfghhj.executor.trade.create.phase.TradeInitPhase;
+import top.dfghhj.executor.trade.create.phase.*;
 import top.dfghhj.extension.trade.validation.TradeValidationExtPt;
 import top.dfghhj.message.DomainEventMQPublisher;
 import top.dfghhj.message.DomainEventPublisher;
@@ -21,11 +20,17 @@ import javax.annotation.Resource;
 public class TradeAddCmdExe {
 
     @Resource
+    private TradeSafetyInspectionPhase tradeSafetyInspectionPhase;
+    @Resource
     private TradeInitPhase tradeInitPhase;
     @Resource
-    private TradeCheckPhase tradeCheckPhase;
+    private TradeVerifyTradeInfoPhase tradeVerifyTradeInfoPhase;
     @Resource
-    private TradeCreatePhase tradeCreatePhase;
+    private TradeCalculateTradePhase tradeCalculateTradePhase;
+    @Resource
+    private TradeInventoryLockPhase tradeInventoryLockPhase;
+    @Resource
+    private TradeSavePhase tradeSavePhase;
 
     @Resource
     private ExtensionExecutor extensionExecutor;
@@ -35,26 +40,26 @@ public class TradeAddCmdExe {
     private DomainEventMQPublisher domainEventMQPublisher;
 
     public Response execute(TradeAddCmd cmd) {
-        log.info("开始处理命令: {}", cmd);
-
-        //校验各种类型订单的必须参数和类型
+        //参数完整性校验
         extensionExecutor.executeVoid(TradeValidationExtPt.class, cmd.getBizScenario(), extension->extension.validate(cmd));
-
-        //组装Trade信息
+        //组装订单信息
         Trade trade = initTrade(cmd);
-
-        //校验订单信息（库存、金额）
-        checkData(trade);
-
-        //生成单号、初始化交易状态、保存订单信息
-        create(trade);
-
+        //安全检测
+        safetyInspectionPhase(trade);
+        //校验订单信息
+        verifyTradeInfoPhase(trade);
+        //计算商品金额、会员权益
+        calculateTradePhase(trade);
+        //库存锁定
+        inventoryLockPhase(trade);
+        //生成单号，保存
+        save(trade);
         //推送订单创建事件
-        // 1.减库存
-        // 2.通知商家
-        TradeCreatedEvent tradeCreatedEvent = new TradeCreatedEvent(trade.getTradeId());
+        TradeCreatedEvent tradeCreatedEvent = new TradeCreatedEvent(trade.getOrderId());
         domainEventPublisher.publish(tradeCreatedEvent);
         domainEventMQPublisher.publish(tradeCreatedEvent);
+        //返回订单信息
+        //todo 转换成DTO返回
         return Response.buildSuccess();
     }
 
@@ -62,12 +67,24 @@ public class TradeAddCmdExe {
         return tradeInitPhase.initTrade(cmd);
     }
 
-    private void checkData(Trade trade) {
-        tradeCheckPhase.checkData(trade);
+    private void safetyInspectionPhase(Trade trade) {
+        tradeSafetyInspectionPhase.safetyInspection(trade);
     }
 
-    private void create(Trade trade) {
-        tradeCreatePhase.createTrade(trade);
+    private void verifyTradeInfoPhase(Trade trade) {
+        tradeVerifyTradeInfoPhase.verifyTradeInfo(trade);
+    }
+
+    private void calculateTradePhase(Trade trade) {
+        tradeCalculateTradePhase.calculateTrade(trade);
+    }
+
+    private void inventoryLockPhase(Trade trade) {
+        tradeInventoryLockPhase.inventoryLock(trade);
+    }
+
+    private void save(Trade trade) {
+        tradeSavePhase.saveTrade(trade);
     }
 
 }

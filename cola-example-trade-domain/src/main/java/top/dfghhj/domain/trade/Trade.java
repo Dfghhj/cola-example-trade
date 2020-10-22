@@ -1,50 +1,126 @@
 package top.dfghhj.domain.trade;
 
 import com.alibaba.cola.domain.EntityObject;
-import top.dfghhj.domain.shopper.Shopper;
-import top.dfghhj.domain.trade.commodity.TradeCommodity;
-import top.dfghhj.domain.trade.logistics.Logistics;
-import top.dfghhj.domain.trade.payment.PaymentInfo;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import top.dfghhj.domain.customer.Customer;
+import top.dfghhj.domain.logistics.Logistics;
+import top.dfghhj.domain.merchant.Merchant;
+import top.dfghhj.domain.trade.rule.TradeRule;
+import top.dfghhj.dto.trade.domainmodel.TradeStatusEnum;
 
-import javax.validation.constraints.NotEmpty;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 public class Trade extends EntityObject {
 
-    /* 订单号 */
-    private String tradeId;
+    /* id */
+    private Long id;
 
-    /* 顾客信息 */
-    private Shopper shopper;
+    /* 订单Id */
+    private String orderId;
 
-    /* 商品列表 */
+    /* 顾客（买方） */
+    private Customer customer;
+
+    /* 商家 */
+    private Merchant merchant;
+
+    /* 订单内容 */
     private List<TradeCommodity> commodityList;
-
-    /* 支付信息 */
-    private PaymentInfo paymentInfo;
 
     /* 物流信息 */
     private Logistics logistics;
 
-    /* 订单状态 */
-    private List<TradeStatus> tradeStatus;
+    /* 商品原金额 */
+    private BigDecimal commodityAmount;
 
-    /* 收货地址 */
-    private String targetAddr;
+    /* 商品优惠后金额 */
+    private BigDecimal commodityAfterDiscountAmount;
 
-    /* 订单来源 */
-    @NotEmpty
-    private String source;
+    /* 运费 */
+    private BigDecimal logisticsAmount;
 
-    /* 订单类型 */
-    @NotEmpty
-    private String type;
+    /* 总费用 */
+    private BigDecimal amount;
+
+    /* 付款信息 */
+    private TradePaymentInfo paymentInfo;
+
+    /* 订单状态流 */
+    private List<TradeStatus> orderStatusList;
 
     /* 创建时间 */
-    private Long creatTime;
+    private Long createTime;
 
+    public void changeStatus(TradeStatusEnum tradeStatusEnum) {
+        if (orderStatusList == null) {
+            orderStatusList = new ArrayList<>();
+        }
+        orderStatusList.add(new TradeStatus(this, tradeStatusEnum.name()));
+    }
+
+
+
+    /**
+     * 计算订单最后成交金额
+     */
+    public void calculateAmount(List<TradeRule> tradeRuleList) {
+        if (tradeRuleList == null || tradeRuleList.size() == 0) {
+            this.amount = this.commodityAfterDiscountAmount.add(this.logisticsAmount);
+        }
+    }
+
+    /**
+     * 计算商品原始价格
+     * @return
+     */
+    public void calculateCommodityOriginalAmount() {
+        BigDecimal commodityAmount = new BigDecimal("0");
+        for (TradeCommodity tradeCommodity:commodityList) {
+            commodityAmount = commodityAmount.add(tradeCommodity.getCommodity().getOriginalAmount());
+        }
+        this.commodityAmount = commodityAmount;
+    }
+
+    /**
+     * 计算商品折扣价格
+     * @return
+     */
+    public void calculateCommodityAmount() {
+        BigDecimal commodityAfterDiscountAmount = new BigDecimal("0");
+        for (TradeCommodity tradeCommodity:commodityList) {
+            commodityAfterDiscountAmount = commodityAfterDiscountAmount.add(tradeCommodity.calculateAmount());
+        }
+        this.commodityAfterDiscountAmount = commodityAfterDiscountAmount;
+    }
+
+    /**
+     * 计算运费
+     * 1.是否包邮
+     * 2.按距离计算运费
+     * 3.按快递运输时间计算运费
+     */
+    public void calculateLogisticsAmount() {
+        this.logisticsAmount = new BigDecimal("0");
+    }
+
+    @Override
+    public String toString() {
+        return "Trade{" +
+                "id=" + id +
+                ", orderId='" + orderId + '\'' +
+                ", customer=" + customer +
+                ", merchant=" + merchant +
+                ", commodityList=" + commodityList +
+                ", logistics=" + logistics +
+                ", commodityAmount=" + commodityAmount +
+                ", logisticsAmount=" + logisticsAmount +
+                ", amount=" + amount +
+                ", paymentInfo=" + paymentInfo +
+                ", orderStatusList=" + orderStatusList +
+                ", createTime=" + createTime +
+                '}';
+    }
 }

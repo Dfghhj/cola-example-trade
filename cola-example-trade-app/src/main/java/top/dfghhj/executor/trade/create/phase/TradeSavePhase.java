@@ -1,5 +1,6 @@
 package top.dfghhj.executor.trade.create.phase;
 
+import lombok.extern.slf4j.Slf4j;
 import top.dfghhj.domain.gateway.trade.TradeGatewayI;
 import top.dfghhj.domain.gateway.trade.TradeStatusGatewayI;
 import top.dfghhj.domain.trade.Trade;
@@ -10,22 +11,20 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.UUID;
 
+@Slf4j
 @Component
-public class TradeCreatePhase {
+public class TradeSavePhase {
 
     @Resource
     private TradeGatewayI tradeGateway;
     @Resource
     private TradeStatusGatewayI tradeStatusGateway;
 
-    public void createTrade(Trade trade) {
-
-        String tradeId = generateTradeId();
-        trade.setTradeId(tradeId);
+    public void saveTrade(Trade trade) {
+        log.info("保存订单...");
+        String orderId = generateTradeId();
+        trade.setOrderId(orderId);
         tradeGateway.save(trade);
-
-        TradeStatus tradeStatus = new TradeStatus(trade, TradeStatusEnum.NORMAL.name());
-        tradeStatusGateway.save(tradeStatus);
     }
 
     private String generateTradeId() {

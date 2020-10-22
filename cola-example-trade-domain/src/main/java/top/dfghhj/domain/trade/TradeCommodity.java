@@ -1,18 +1,25 @@
-package top.dfghhj.domain.trade.commodity;
+package top.dfghhj.domain.trade;
 
-import top.dfghhj.domain.commodity.Commodity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import top.dfghhj.domain.commodity.Commodity;
+
+import java.math.BigDecimal;
 
 @Data
+@AllArgsConstructor
 public class TradeCommodity {
 
     private Commodity commodity;
 
     private Integer count;
 
-    public TradeCommodity(Commodity commodity, Integer count) {
-        this.commodity = commodity;
-        this.count = count;
+    /**
+     * 计算价格
+     * @return
+     */
+    public BigDecimal calculateAmount() {
+        return  commodity.calculateAmount().multiply(BigDecimal.valueOf(count));
     }
 
     /**

@@ -2,7 +2,7 @@ package top.dfghhj.domain.commodity;
 
 import com.alibaba.cola.domain.EntityObject;
 import com.alibaba.cola.exception.BizException;
-import top.dfghhj.domain.commodity.rule.ActivityRules;
+import top.dfghhj.domain.commodity.rule.CommodityAmountRules;
 import top.dfghhj.domain.commodity.rule.InventoryRules;
 import lombok.Data;
 
@@ -12,16 +12,24 @@ import java.math.BigDecimal;
 public class Commodity extends EntityObject {
 
     private String id;
+
     private String commodityId;
+
     private String commodityName;
+
+    private String merchantId;
+
     private String description;
+
     /* 价格 */
-    private BigDecimal price;
-    /* 价格活动策略 */
-    private ActivityRules activityRules;
+    private BigDecimal amount;
+
+    /* 价格活动 */
+    private CommodityAmountRules commodityAmountRules;
 
     /* 库存数量 */
     private Integer inventory;
+
     /* 库存规则 */
     private InventoryRules inventoryRules;
 
@@ -31,15 +39,22 @@ public class Commodity extends EntityObject {
      */
     private Integer purchaseLimit;
 
-
     /**
-     * 根据 price 和 activityRules，计算活动价格
+     * 获取原价
      * @return
      */
-    public BigDecimal calculateActivityPrice() {
+    public BigDecimal getOriginalAmount() {
+        return amount;
+    }
+
+    /**
+     * 根据 price 和 commodityAmountRules，计算活动价格
+     * @return
+     */
+    public BigDecimal calculateAmount() {
         // 计算活动价格
 
-        return price;
+        return amount;
     }
 
     /**
@@ -75,4 +90,18 @@ public class Commodity extends EntityObject {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Commodity{" +
+                "id='" + id + '\'' +
+                ", commodityId='" + commodityId + '\'' +
+                ", commodityName='" + commodityName + '\'' +
+                ", merchantId='" + merchantId + '\'' +
+                ", description='" + description + '\'' +
+                ", amount=" + amount +
+                ", inventory=" + inventory +
+                ", inventoryRules=" + inventoryRules +
+                ", purchaseLimit=" + purchaseLimit +
+                '}';
+    }
 }
