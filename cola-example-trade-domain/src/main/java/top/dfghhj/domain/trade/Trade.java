@@ -1,6 +1,7 @@
 package top.dfghhj.domain.trade;
 
 import com.alibaba.cola.domain.EntityObject;
+import com.alibaba.cola.exception.BizException;
 import lombok.Data;
 import top.dfghhj.domain.customer.Customer;
 import top.dfghhj.domain.logistics.Logistics;
@@ -10,7 +11,9 @@ import top.dfghhj.dto.trade.domainmodel.TradeStatusEnum;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 public class Trade extends EntityObject {
@@ -122,5 +125,13 @@ public class Trade extends EntityObject {
                 ", orderStatusList=" + orderStatusList +
                 ", createTime=" + createTime +
                 '}';
+    }
+
+    public TradeStatus getLastTradeStatus() {
+        Optional<TradeStatus> tradeStatusOptional = orderStatusList.stream().max(Comparator.comparing(TradeStatus::getCreateTime));
+        if (!tradeStatusOptional.isPresent()) {
+            throw new BizException("订单状态异常");
+        }
+        return tradeStatusOptional.get();
     }
 }

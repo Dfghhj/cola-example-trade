@@ -60,7 +60,7 @@ public class TradeAddCmdExe {
         domainEventMQPublisher.publish(tradeCreatedEvent);
         //返回订单信息
         //todo 转换成DTO返回
-        return Response.buildSuccess();
+        return SingleResponse.of(trade.getOrderId());
     }
 
     private Trade initTrade(TradeAddCmd cmd) {

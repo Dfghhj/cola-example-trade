@@ -24,7 +24,10 @@ public class TradeSavePhase {
         log.info("保存订单...");
         String orderId = generateTradeId();
         trade.setOrderId(orderId);
+
         tradeGateway.save(trade);
+
+        tradeStatusGateway.save(trade.getLastTradeStatus());
     }
 
     private String generateTradeId() {

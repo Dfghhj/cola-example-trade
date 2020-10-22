@@ -11,13 +11,12 @@ public class TradeStatus {
 
     private Long createTime;
 
-    private Long modifiedTime;
-
     private Trade trade;
 
     public TradeStatus(Trade trade, String status) {
         this.trade = trade;
         this.status = status;
+        this.createTime = System.currentTimeMillis();
     }
 
     @Override
@@ -26,7 +25,6 @@ public class TradeStatus {
                 "id=" + id +
                 ", status='" + status + '\'' +
                 ", createTime=" + createTime +
-                ", modifiedTime=" + modifiedTime +
                 ", trade=" + trade.getOrderId() +
                 '}';
     }
